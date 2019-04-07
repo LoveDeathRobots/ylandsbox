@@ -1,8 +1,8 @@
 # 艾兰岛盒子
 
-[![image](https://img.shields.io/badge/PyQt5-5.12.1-green.svg)]
-[![image](https://img.shields.io/badge/python-3.7.2-blue.svg)]
-[![image](https://img.shields.io/badge/pillow-6.0.0-yellow.svg)]
+![image](https://img.shields.io/badge/PyQt5-5.12.1-green.svg)
+![image](https://img.shields.io/badge/python-3.7.2-blue.svg)
+![image](https://img.shields.io/badge/pillow-6.0.0-yellow.svg)
 
 ## 功能
 
