@@ -11,7 +11,7 @@ class LoginDialog(QWidget):
 
     def setup(self):
         self.box = QVBoxLayout(self)  # 创建一个垂直布局来放控件
-        self.btn_get = QPushButton('点击获取cookies')  # 创建一个按钮涌来了点击获取cookie
+        self.btn_get = QPushButton('点击获取存档目录')  # 创建一个按钮涌来了点击获取cookie
         self.btn_get.clicked.connect(self.get_railid)  # 绑定按钮点击事件
         self.web = WebEngineView()  # 创建浏览器组件对象
         self.web.resize(1200, 600)  # 设置大小
@@ -26,12 +26,11 @@ class LoginDialog(QWidget):
         self.LoginRailIDSignel.emit(0, cookie)
 
 
-
-
 # 创建自己的浏览器控件，继承自QWebEngineView
 class WebEngineView(QWebEngineView):
     DomainCookies = {}
     PathCookies = {}
+
     def __init__(self, *args, **kwargs):
         super(WebEngineView, self).__init__(*args, **kwargs)
         # 绑定cookie被添加的信号槽

@@ -107,6 +107,9 @@
     </item>
     <item>
      <widget class="QTabWidget" name="YCPTAB">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="currentIndex">
        <number>0</number>
       </property>
@@ -116,7 +119,14 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
-         <widget class="QTreeView" name="YCPGAMETREE"/>
+         <widget class="QTreeView" name="YCPGAMETREE">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <attribute name="headerDefaultSectionSize">
+           <number>120</number>
+          </attribute>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -126,7 +136,11 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
-         <widget class="QTreeView" name="YCPCOMPTREE"/>
+         <widget class="QTreeView" name="YCPCOMPTREE">
+          <attribute name="headerDefaultSectionSize">
+           <number>120</number>
+          </attribute>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -136,7 +150,11 @@
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
-         <widget class="QTreeView" name="YLANDFILETREE"/>
+         <widget class="QTreeView" name="YLANDFILETREE">
+          <attribute name="headerDefaultSectionSize">
+           <number>120</number>
+          </attribute>
+         </widget>
         </item>
        </layout>
       </widget>

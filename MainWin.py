@@ -1,5 +1,6 @@
-from PyQt5.QtWidgets import QMainWindow, QGroupBox, QFileDialog, QFileSystemModel
-from PyQt5.QtCore import QDir
+from PyQt5.QtWidgets import QMainWindow, QGroupBox, QFileDialog, QFileSystemModel, QMenu, QTreeView, QApplication, QMessageBox
+from PyQt5.QtCore import Qt, QMimeData, QUrl
+from PyQt5.QtGui import QCursor
 from UI.Main import Ui_MainWindow
 from Login import LoginDialog
 from ImageRGB import ImageRGB
@@ -17,9 +18,11 @@ class MainWin(QMainWindow, Ui_MainWindow):
 
         # 设置TreeWidgets
         self.trees = [self.YCPGAMETREE, self.YCPCOMPTREE, self.YLANDFILETREE]
+        for tree in self.trees:
+            tree.setContextMenuPolicy(Qt.CustomContextMenu)
+            tree.customContextMenuRequested.connect(self.show_context_menu)
+            tree.header().setMinimumSectionSize(120)
         self.model = QFileSystemModel()
-
-
 
         self.RailID = ''
         self.ylands_path = ''
@@ -46,8 +49,8 @@ class MainWin(QMainWindow, Ui_MainWindow):
         self.ImageMainWin.show()
 
     def slot_emit(self, flag, str):
+        # 获得 rail_id
         self.RailID = str
-        print(str)
         self.ycp_game_folder_path = self.rail_user_data + '\\' + self.RailID + '\\cloud_storage\\files\\Share\\Games'
         self.ycp_comp_folder_path = self.rail_user_data + '\\' + self.RailID + '\\cloud_storage\\files\\Share\\Compositions'
         self.yland_folder_path = self.rail_user_data + '\\' + self.RailID + '\\cloud_storage\\files\\Scenarios'
@@ -57,6 +60,7 @@ class MainWin(QMainWindow, Ui_MainWindow):
             pass
         if os.path.exists(self.yland_folder_path):
             pass
+        self.YCPTAB.setEnabled(True)
         self.YCPTAB.setCurrentIndex(0)
         self.refresh_tab_qlistwidget(0)
 
@@ -64,18 +68,20 @@ class MainWin(QMainWindow, Ui_MainWindow):
         if self.RailID != '':
             self.OpenDirBtn.setEnabled(True)
             if index == 0:
+                self.YCPGAMETREE.setEnabled(True)
                 self.refresh_path(index, self.ycp_game_folder_path)
                 self.model.setRootPath(self.ycp_game_folder_path)
-
                 self.YCPGAMETREE.setModel(self.model)
                 self.YCPGAMETREE.setRootIndex(self.model.index(self.ycp_game_folder_path))
 
             elif index == 1:
+                self.YCPCOMPTREE.setEnabled(True)
                 self.refresh_path(index, self.ycp_comp_folder_path)
                 self.model.setRootPath(self.ycp_comp_folder_path)
                 self.YCPCOMPTREE.setModel(self.model)
                 self.YCPCOMPTREE.setRootIndex(self.model.index(self.ycp_comp_folder_path))
             else:
+                self.YLANDFILETREE.setEnabled(True)
                 self.refresh_path(index, self.yland_folder_path)
                 self.model.setRootPath(self.yland_folder_path)
                 self.YLANDFILETREE.setModel(self.model)
@@ -88,10 +94,9 @@ class MainWin(QMainWindow, Ui_MainWindow):
         if MainWin.isconnected(self.OpenDirBtn, 'clicked()'):
             self.OpenDirBtn.disconnect()
         self.OpenDirBtn.clicked.connect(lambda: self.open_dir(path, index))
-
         #TODO 通过背景颜色，显示文件被使用的状态
 
-    def opendir(self, path, index):
+    def open_dir(self, path, index):
         # QFileDialog.getExistingDirectory(self,"浏览"+ self.GroupBoxTitleDict[index], path, QFileDialog.ShowDirsOnly)
         QFileDialog.getOpenFileNames(self, "浏览" + self.GroupBoxTitleDict[index], path, "All Files (*);;Text Files (*.txt)")
 
@@ -104,6 +109,7 @@ class MainWin(QMainWindow, Ui_MainWindow):
                 if type != '.txt':
                     count += 1
         self.statusbar.showMessage("文件数：" + str(count))
+
     @staticmethod
     def isconnected(obj, name):
         """判断信号是否连接
@@ -116,3 +122,35 @@ class MainWin(QMainWindow, Ui_MainWindow):
             if method:
                 return obj.isSignalConnected(method)
         return False
+
+    def show_context_menu(self, pos):
+        sender: QTreeView = self.sender()
+        row_index = sender.indexAt(pos).row()
+        menu = QMenu()
+        cpy = menu.addAction('复制')
+        cpy.triggered.connect(lambda: self.copy_selected(sender.currentIndex()))
+        rmfile = menu.addAction('删除')
+        rmfile.triggered.connect(lambda: self.remove_selected_file(sender.currentIndex()))
+        menu.exec_(QCursor.pos())
+
+    def copy_selected(self, index):
+        filename = self.model.fileName(index)
+        filepath = self.model.filePath(index)
+        data = QMimeData()
+        url = QUrl.fromLocalFile(filepath)
+        clipboard = QApplication.clipboard()
+        data.setUrls([url])
+        clipboard.setMimeData(data)
+
+    def remove_selected_file(self, index):
+        filename = self.model.fileName(index)
+        filepath = self.model.filePath(index)
+        if not self.model.fileInfo(index).isDir():
+            msgBox = QMessageBox()
+            msgBox.setText("确定删除文件：" + filename + "?")
+            msgBox.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+            ret = msgBox.exec_()
+            if ret == QMessageBox.Ok:
+                self.model.remove(index)
+            else:
+                return

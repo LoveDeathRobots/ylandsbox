@@ -61,33 +61,43 @@ class ImageRGB(QWidget, Ui_ImageRGB):
         self.show_thumbnails(self.im_50, self.thumb_50)
 
     def on_radio_button_toggled(self):
-        # radiobutton = self.sender()
-        # self.pixel_size = 0
-        # if radiobutton.isChecked():
-        #     if radiobutton.index == 1:
-        #         self.pixel_size = 100
-        #     elif radiobutton.index == 2:
-        #         self.pixel_size = 50
-        #     else:
-        #         self.pixel_size = 0
         self.GetRGBBtn.setEnabled(True)
 
-
-    def get_pixel(self, size_pixel):
+    def get_pixel(self):
+        self.textBrowser.clear()
         if self.radioButton_1.isChecked():
             thumb_list = []
-            for x in range(self.im_100.width):
+            y_index = self.im_100.height - 1
+            while y_index >= 0:
                 line_list = []
-                for y in range(self.im_100.height):
-                    pixel = self.im_100.getpixel((y, x))
+                for x in range(self.im_100.width):
+                    pixel = self.im_100.getpixel((x, y_index))
                     line_list.append(ImageRGB.rgb2hex(pixel[0], pixel[1], pixel[2]))
-                thumb_list.append(",".join(line_list))
-            thumb_list.reverse()
+                thumb_list.append("".join(line_list))
+                y_index -= 1
             self.textBrowser.setText("\n".join(thumb_list))
         elif self.radioButton_2.isChecked():
-            print(2)
+            thumb_list = []
+            y_index = self.im_50.height - 1
+            while y_index >= 0:
+                line_list = []
+                for x in range(self.im_50.width):
+                    pixel = self.im_50.getpixel((x, y_index))
+                    line_list.append(ImageRGB.rgb2hex(pixel[0], pixel[1], pixel[2]))
+                thumb_list.append("".join(line_list))
+                y_index -= 1
+            self.textBrowser.setText("\n".join(thumb_list))
         else:
-            print(0)
+            thumb_list = []
+            y_index = self.im.height - 1
+            while y_index >= 0:
+                line_list = []
+                for x in range(self.im.width):
+                    pixel = self.im.getpixel((x, y_index))
+                    line_list.append(ImageRGB.rgb2hex(pixel[0], pixel[1], pixel[2]))
+                thumb_list.append("".join(line_list))
+                y_index -= 1
+            self.textBrowser.setText("\n".join(thumb_list))
 
     def show_thumbnails(self, img: Image, label: QLabel):
         image = ImageQt(img)
