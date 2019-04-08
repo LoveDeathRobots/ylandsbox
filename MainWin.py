@@ -1,10 +1,10 @@
 from PyQt5.QtWidgets import QMainWindow, QGroupBox, QFileDialog, QFileSystemModel, QMenu, QTreeView, QApplication, QMessageBox
-from PyQt5.QtCore import Qt, QMimeData, QUrl
-from PyQt5.QtGui import QCursor
+from PyQt5.QtCore import Qt, QMimeData, QUrl, QFile
+from PyQt5.QtGui import QCursor, QDragEnterEvent, QDropEvent, QDragMoveEvent
 from UI.Main import Ui_MainWindow
 from Login import LoginDialog
 from ImageRGB import ImageRGB
-import os, winreg
+import os, winreg, shutil
 
 
 class MainWin(QMainWindow, Ui_MainWindow):
@@ -16,12 +16,14 @@ class MainWin(QMainWindow, Ui_MainWindow):
         self.LoginDialog = LoginDialog()
         self.ImageMainWin = ImageRGB()
 
+
         # 设置TreeWidgets
         self.trees = [self.YCPGAMETREE, self.YCPCOMPTREE, self.YLANDFILETREE]
         for tree in self.trees:
             tree.setContextMenuPolicy(Qt.CustomContextMenu)
             tree.customContextMenuRequested.connect(self.show_context_menu)
             tree.header().setMinimumSectionSize(120)
+
         self.model = QFileSystemModel()
 
         self.RailID = ''
@@ -54,15 +56,16 @@ class MainWin(QMainWindow, Ui_MainWindow):
         self.ycp_game_folder_path = self.rail_user_data + '\\' + self.RailID + '\\cloud_storage\\files\\Share\\Games'
         self.ycp_comp_folder_path = self.rail_user_data + '\\' + self.RailID + '\\cloud_storage\\files\\Share\\Compositions'
         self.yland_folder_path = self.rail_user_data + '\\' + self.RailID + '\\cloud_storage\\files\\Scenarios'
-        if os.path.exists(self.ycp_game_folder_path):
+        if not os.path.exists(self.ycp_game_folder_path):
             pass
-        if os.path.exists(self.ycp_comp_folder_path):
+        if not os.path.exists(self.ycp_comp_folder_path):
             pass
-        if os.path.exists(self.yland_folder_path):
+        if not os.path.exists(self.yland_folder_path):
             pass
         self.YCPTAB.setEnabled(True)
         self.YCPTAB.setCurrentIndex(0)
         self.refresh_tab_qlistwidget(0)
+        self.setAcceptDrops(True)
 
     def refresh_tab_qlistwidget(self, index):
         if self.RailID != '':
@@ -154,3 +157,78 @@ class MainWin(QMainWindow, Ui_MainWindow):
                 self.model.remove(index)
             else:
                 return
+
+    def dragEnterEvent(self, event: QDragEnterEvent):
+        if event.mimeData().hasUrls:
+            filetempname = event.mimeData().urls()[0].fileName()
+            filename, extension = os.path.splitext(filetempname)
+            if self.YCPTAB.currentIndex() == 0 or self.YCPTAB.currentIndex() == 1:
+                if extension == '.ycp':
+                    event.accept()
+                    # clipboard = QApplication.clipboard()
+                    # clipboard.clear()
+                    # clipboard.setMimeData(event.mimeData())
+                else:
+                    msgBox = QMessageBox()
+                    msgBox.setText("只能拖放.ycp后缀文件")
+                    ret = msgBox.exec_()
+                    event.ignore()
+                    return
+            elif self.YCPTAB.currentIndex() == 2:
+                if extension == '.yland':
+                    event.accept()
+                    # clipboard = QApplication.clipboard()
+                    # clipboard.clear()
+                    # clipboard.setMimeData(event.mimeData())
+                else:
+                    msgBox = QMessageBox()
+                    msgBox.setText("只能拖放.yland后缀文件")
+                    ret = msgBox.exec_()
+                    event.ignore()
+                    return
+
+    def dragMoveEvent(self, event: QDragMoveEvent):
+        if event.mimeData().hasUrls:
+            try:
+                event.setDropAction(Qt.CopyAction)
+            except Exception as e:
+                print(e)
+            event.accept()
+        else:
+            event.ignore()
+
+    def dropEvent(self, event: QDropEvent):
+        try:
+            if event.mimeData().hasUrls:
+                event.setDropAction(Qt.CopyAction)
+                event.accept()
+                filepath = event.mimeData().urls()[0]
+                filename = filepath.fileName()
+                print(filepath.url())
+                print(os.path.join(self.ycp_game_folder_path, filename))
+                self.copy_file(filepath.url().replace("file:///", ""), os.path.join(self.ycp_game_folder_path, filename))
+                if self.YCPTAB.currentIndex() == 0:
+                    pass
+                elif self.YCPTAB.currentIndex() == 1:
+                    pass
+                else:
+                    pass
+
+            else:
+                event.ignore()
+        except Exception as e:
+            print(e)
+
+    def copy_file(self,srcfle, dstfile):
+        newdstfile = dstfile
+        if not os.path.isfile(srcfle):
+            print("$%s not exist!" % (srcfle))
+        else:
+            fpath, ftempname = os.path.split(dstfile)
+            if not os.path.exists(fpath):
+                os.makedirs(fpath)
+            elif os.path.exists(dstfile):
+                filename, extension = os.path.splitext(ftempname)
+                newdstfile = os.path.join(fpath, filename + "copybyylandsbox" + extension)
+            shutil.copyfile(srcfle, newdstfile)
+

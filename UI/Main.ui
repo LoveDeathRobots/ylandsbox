@@ -123,6 +123,9 @@
           <property name="enabled">
            <bool>false</bool>
           </property>
+          <property name="dragEnabled">
+           <bool>false</bool>
+          </property>
           <attribute name="headerDefaultSectionSize">
            <number>120</number>
           </attribute>

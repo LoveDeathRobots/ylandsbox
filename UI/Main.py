@@ -63,6 +63,7 @@ class Ui_MainWindow(object):
         self.verticalLayout.setObjectName("verticalLayout")
         self.YCPGAMETREE = QtWidgets.QTreeView(self.YCPGAME)
         self.YCPGAMETREE.setEnabled(False)
+        self.YCPGAMETREE.setDragEnabled(False)
         self.YCPGAMETREE.setObjectName("YCPGAMETREE")
         self.YCPGAMETREE.header().setDefaultSectionSize(120)
         self.verticalLayout.addWidget(self.YCPGAMETREE)
