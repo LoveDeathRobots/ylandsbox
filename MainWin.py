@@ -204,16 +204,12 @@ class MainWin(QMainWindow, Ui_MainWindow):
                 event.accept()
                 filepath = event.mimeData().urls()[0]
                 filename = filepath.fileName()
-                print(filepath.url())
-                print(os.path.join(self.ycp_game_folder_path, filename))
-                self.copy_file(filepath.url().replace("file:///", ""), os.path.join(self.ycp_game_folder_path, filename))
                 if self.YCPTAB.currentIndex() == 0:
-                    pass
+                    self.copy_file(filepath.url().replace("file:///", ""), os.path.join(self.ycp_game_folder_path, filename))
                 elif self.YCPTAB.currentIndex() == 1:
-                    pass
+                    self.copy_file(filepath.url().replace("file:///", ""), os.path.join(self.ycp_comp_folder_path, filename))
                 else:
-                    pass
-
+                    self.copy_file(filepath.url().replace("file:///", ""), os.path.join(self.yland_folder_path, filename))
             else:
                 event.ignore()
         except Exception as e:
