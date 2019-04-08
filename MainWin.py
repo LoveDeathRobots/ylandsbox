@@ -58,11 +58,11 @@ class MainWin(QMainWindow, Ui_MainWindow):
         self.ycp_comp_folder_path = self.rail_user_data + '\\' + self.RailID + '\\cloud_storage\\files\\Share\\Compositions'
         self.yland_folder_path = self.rail_user_data + '\\' + self.RailID + '\\cloud_storage\\files\\Scenarios'
         if not Path.exists(self.ycp_game_folder_path):
-            pass
+            makedirs(self.ycp_game_folder_path)
         if not Path.exists(self.ycp_comp_folder_path):
-            pass
+            makedirs(self.ycp_comp_folder_path)
         if not Path.exists(self.yland_folder_path):
-            pass
+            makedirs(self.yland_folder_path)
         self.YCPTAB.setEnabled(True)
         self.YCPTAB.setCurrentIndex(0)
         self.refresh_tab_qlistwidget(0)
