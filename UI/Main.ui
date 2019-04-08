@@ -41,7 +41,17 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>艾兰岛盒子</string>
+   <string>艾兰岛助手</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../../../Downloads/20190408014359497_easyicon_net_32.ico</normaloff>../../../Downloads/20190408014359497_easyicon_net_32.ico</iconset>
+  </property>
+  <property name="iconSize">
+   <size>
+    <width>32</width>
+    <height>32</height>
+   </size>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,0,12">

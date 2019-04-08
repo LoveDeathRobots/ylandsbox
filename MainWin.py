@@ -1,10 +1,12 @@
-from PyQt5.QtWidgets import QMainWindow, QGroupBox, QFileDialog, QFileSystemModel, QMenu, QTreeView, QApplication, QMessageBox
-from PyQt5.QtCore import Qt, QMimeData, QUrl, QFile
-from PyQt5.QtGui import QCursor, QDragEnterEvent, QDropEvent, QDragMoveEvent
+from PyQt5.QtWidgets import QMainWindow, QGroupBox, QFileDialog, QFileSystemModel, QMenu, QApplication, QMessageBox
+from PyQt5.QtCore import Qt, QMimeData, QUrl
+from PyQt5.QtGui import QCursor
 from UI.Main import Ui_MainWindow
 from Login import LoginDialog
 from ImageRGB import ImageRGB
-import os, winreg, shutil
+from os import path as Path, walk, makedirs
+from winreg import OpenKey, QueryValueEx, HKEY_CURRENT_USER
+from shutil import copyfile
 
 
 class MainWin(QMainWindow, Ui_MainWindow):
@@ -15,7 +17,6 @@ class MainWin(QMainWindow, Ui_MainWindow):
         self.RGB.triggered.connect(self.open_image_rgb)
         self.LoginDialog = LoginDialog()
         self.ImageMainWin = ImageRGB()
-
 
         # 设置TreeWidgets
         self.trees = [self.YCPGAMETREE, self.YCPCOMPTREE, self.YLANDFILETREE]
@@ -32,11 +33,11 @@ class MainWin(QMainWindow, Ui_MainWindow):
         self.ycp_game_folder_path = ''
         self.ycp_comp_folder_path = ''
         self.yland_folder_path = ''
-        self.key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\Rail\YlandsRail")
-        _value, type = winreg.QueryValueEx(self.key, "InstallPath")
+        self.key = OpenKey(HKEY_CURRENT_USER, r"Software\Rail\YlandsRail")
+        _value, type = QueryValueEx(self.key, "InstallPath")
         if _value:
             self.ylands_path = _value
-            self.rail_user_data = os.path.dirname(self.ylands_path) + '\\' + 'rail_user_data\\2000108'
+            self.rail_user_data = Path.dirname(self.ylands_path) + '\\' + 'rail_user_data\\2000108'
         self.YCPTAB.currentChanged.connect(self.refresh_tab_qlistwidget)
         self.GroupBoxTitleDict = {0: 'YCP游戏目录', 1: 'YCP组件目录', 2: 'YLAND文件目录'}
         self.YCPTAB.setCurrentIndex(0)
@@ -56,11 +57,11 @@ class MainWin(QMainWindow, Ui_MainWindow):
         self.ycp_game_folder_path = self.rail_user_data + '\\' + self.RailID + '\\cloud_storage\\files\\Share\\Games'
         self.ycp_comp_folder_path = self.rail_user_data + '\\' + self.RailID + '\\cloud_storage\\files\\Share\\Compositions'
         self.yland_folder_path = self.rail_user_data + '\\' + self.RailID + '\\cloud_storage\\files\\Scenarios'
-        if not os.path.exists(self.ycp_game_folder_path):
+        if not Path.exists(self.ycp_game_folder_path):
             pass
-        if not os.path.exists(self.ycp_comp_folder_path):
+        if not Path.exists(self.ycp_comp_folder_path):
             pass
-        if not os.path.exists(self.yland_folder_path):
+        if not Path.exists(self.yland_folder_path):
             pass
         self.YCPTAB.setEnabled(True)
         self.YCPTAB.setCurrentIndex(0)
@@ -105,9 +106,9 @@ class MainWin(QMainWindow, Ui_MainWindow):
 
     def files_count(self, path):
         count = 0
-        for root, dirs, files in os.walk(path):
+        for root, dirs, files in walk(path):
             for each in files:
-                file = os.path.splitext(each)
+                file = Path.splitext(each)
                 filename, type = file
                 if type != '.txt':
                     count += 1
@@ -127,7 +128,7 @@ class MainWin(QMainWindow, Ui_MainWindow):
         return False
 
     def show_context_menu(self, pos):
-        sender: QTreeView = self.sender()
+        sender = self.sender()
         row_index = sender.indexAt(pos).row()
         menu = QMenu()
         cpy = menu.addAction('复制')
@@ -158,10 +159,10 @@ class MainWin(QMainWindow, Ui_MainWindow):
             else:
                 return
 
-    def dragEnterEvent(self, event: QDragEnterEvent):
+    def dragEnterEvent(self, event):
         if event.mimeData().hasUrls:
             filetempname = event.mimeData().urls()[0].fileName()
-            filename, extension = os.path.splitext(filetempname)
+            filename, extension = Path.splitext(filetempname)
             if self.YCPTAB.currentIndex() == 0 or self.YCPTAB.currentIndex() == 1:
                 if extension == '.ycp':
                     event.accept()
@@ -187,7 +188,7 @@ class MainWin(QMainWindow, Ui_MainWindow):
                     event.ignore()
                     return
 
-    def dragMoveEvent(self, event: QDragMoveEvent):
+    def dragMoveEvent(self, event):
         if event.mimeData().hasUrls:
             try:
                 event.setDropAction(Qt.CopyAction)
@@ -197,7 +198,7 @@ class MainWin(QMainWindow, Ui_MainWindow):
         else:
             event.ignore()
 
-    def dropEvent(self, event: QDropEvent):
+    def dropEvent(self, event):
         try:
             if event.mimeData().hasUrls:
                 event.setDropAction(Qt.CopyAction)
@@ -205,11 +206,11 @@ class MainWin(QMainWindow, Ui_MainWindow):
                 filepath = event.mimeData().urls()[0]
                 filename = filepath.fileName()
                 if self.YCPTAB.currentIndex() == 0:
-                    self.copy_file(filepath.url().replace("file:///", ""), os.path.join(self.ycp_game_folder_path, filename))
+                    self.copy_file(filepath.url().replace("file:///", ""), Path.join(self.ycp_game_folder_path, filename))
                 elif self.YCPTAB.currentIndex() == 1:
-                    self.copy_file(filepath.url().replace("file:///", ""), os.path.join(self.ycp_comp_folder_path, filename))
+                    self.copy_file(filepath.url().replace("file:///", ""), Path.join(self.ycp_comp_folder_path, filename))
                 else:
-                    self.copy_file(filepath.url().replace("file:///", ""), os.path.join(self.yland_folder_path, filename))
+                    self.copy_file(filepath.url().replace("file:///", ""), Path.join(self.yland_folder_path, filename))
             else:
                 event.ignore()
         except Exception as e:
@@ -217,14 +218,13 @@ class MainWin(QMainWindow, Ui_MainWindow):
 
     def copy_file(self,srcfle, dstfile):
         newdstfile = dstfile
-        if not os.path.isfile(srcfle):
+        if not Path.isfile(srcfle):
             print("$%s not exist!" % (srcfle))
         else:
-            fpath, ftempname = os.path.split(dstfile)
-            if not os.path.exists(fpath):
-                os.makedirs(fpath)
-            elif os.path.exists(dstfile):
-                filename, extension = os.path.splitext(ftempname)
-                newdstfile = os.path.join(fpath, filename + "copybyylandsbox" + extension)
-            shutil.copyfile(srcfle, newdstfile)
-
+            fpath, ftempname = Path.split(dstfile)
+            if not Path.exists(fpath):
+                makedirs(fpath)
+            elif Path.exists(dstfile):
+                filename, extension = Path.splitext(ftempname)
+                newdstfile = Path.join(fpath, filename + "copybyylandsbox" + extension)
+            copyfile(srcfle, newdstfile)

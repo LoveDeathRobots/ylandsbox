@@ -1,9 +1,10 @@
-from PyQt5.QtWidgets import QWidget,QFileDialog, QLabel
+from PyQt5.QtWidgets import QWidget, QFileDialog, QLabel
 from UI.ImageRGB import Ui_ImageRGB
-from PyQt5.QtGui import QPixmap, QImage
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import QSize
 from PIL.ImageQt import ImageQt
-from PIL import Image
+from PIL.Image import open as ImageOpen
+from PIL.Image import ANTIALIAS
 import os
 
 
@@ -40,7 +41,7 @@ class ImageRGB(QWidget, Ui_ImageRGB):
         self.radioButton_2.setEnabled(True)
 
     def init_thumbnails(self, path):
-        self.im = Image.open(path)
+        self.im = ImageOpen(path)
         self.im_100 = self.im.copy()
         self.im_50 = self.im.copy()
         dirname, filename = os.path.split(os.path.abspath(__file__))
@@ -53,10 +54,10 @@ class ImageRGB(QWidget, Ui_ImageRGB):
         self.thumb_path_list.append(thumb_100_path)
         thumb_50_path = os.path.join(thumb_path, filename + 'thumb_50' + extension)
         self.thumb_path_list.append(thumb_50_path)
-        self.im_100.thumbnail((100, 100), Image.ANTIALIAS)
+        self.im_100.thumbnail((100, 100), ANTIALIAS)
         self.im_100.save(thumb_100_path)
         self.show_thumbnails(self.im_100, self.thumb_100)
-        self.im_50.thumbnail((50, 50), Image.ANTIALIAS)
+        self.im_50.thumbnail((50, 50), ANTIALIAS)
         self.im_50.save(thumb_50_path)
         self.show_thumbnails(self.im_50, self.thumb_50)
 
@@ -75,7 +76,7 @@ class ImageRGB(QWidget, Ui_ImageRGB):
                     line_list.append(ImageRGB.rgb2hex(pixel[0], pixel[1], pixel[2]))
                 thumb_list.append("".join(line_list))
                 y_index -= 1
-            self.textBrowser.setText("\n".join(thumb_list))
+            self.textBrowser.setText("".join(thumb_list))
         elif self.radioButton_2.isChecked():
             thumb_list = []
             y_index = self.im_50.height - 1
@@ -86,7 +87,10 @@ class ImageRGB(QWidget, Ui_ImageRGB):
                     line_list.append(ImageRGB.rgb2hex(pixel[0], pixel[1], pixel[2]))
                 thumb_list.append("".join(line_list))
                 y_index -= 1
-            self.textBrowser.setText("\n".join(thumb_list))
+            str_rgb = "".join(thumb_list)
+            str_rgb_len = len(str_rgb)
+
+            self.textBrowser.setText("".join(thumb_list))
         else:
             thumb_list = []
             y_index = self.im.height - 1
@@ -97,9 +101,9 @@ class ImageRGB(QWidget, Ui_ImageRGB):
                     line_list.append(ImageRGB.rgb2hex(pixel[0], pixel[1], pixel[2]))
                 thumb_list.append("".join(line_list))
                 y_index -= 1
-            self.textBrowser.setText("\n".join(thumb_list))
+            self.textBrowser.setText("".join(thumb_list))
 
-    def show_thumbnails(self, img: Image, label: QLabel):
+    def show_thumbnails(self, img, label: QLabel):
         image = ImageQt(img)
         pix_map = QPixmap.fromImage(image).scaled(label.width(), label.height())
         label.setPixmap(pix_map)
@@ -111,3 +115,4 @@ class ImageRGB(QWidget, Ui_ImageRGB):
     @staticmethod
     def rgb2hex(r, g, b):
         return '{:02x}{:02x}{:02x}'.format(r, g, b)
+

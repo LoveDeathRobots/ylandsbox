@@ -21,6 +21,10 @@ class Ui_MainWindow(object):
         font.setFamily("Microsoft YaHei UI")
         font.setPointSize(9)
         MainWindow.setFont(font)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("../../../Downloads/20190408014359497_easyicon_net_32.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        MainWindow.setWindowIcon(icon)
+        MainWindow.setIconSize(QtCore.QSize(32, 32))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -123,7 +127,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "艾兰岛盒子"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "艾兰岛助手"))
         self.groupBox.setTitle(_translate("MainWindow", "YCP游戏目录地址"))
         self.OpenDirBtn.setText(_translate("MainWindow", "打开目录"))
         self.YCPTAB.setTabText(self.YCPTAB.indexOf(self.YCPGAME), _translate("MainWindow", "YCP游戏"))

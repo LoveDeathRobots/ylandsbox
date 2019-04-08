@@ -1,11 +1,8 @@
 import sys
-import logging
 from PyQt5.QtWidgets import QApplication
-import PyQt5.QtCore as QtCore
 from PyQt5.QtCore import QCoreApplication, Qt
 from MainWin import MainWin
 
-logger = logging.getLogger(__name__)
 class App:
 
     instance = None
@@ -19,7 +16,7 @@ class App:
         exec(obj, self._g, self._g)
 
     def show_msg(self, msg, *args, **kwargs):
-        logger.info(msg)
+        pass
 
     @staticmethod
     def get_resolving():
