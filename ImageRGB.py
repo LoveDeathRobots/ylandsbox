@@ -5,7 +5,7 @@ from PyQt5.QtCore import QSize
 from PIL.ImageQt import ImageQt
 from PIL.Image import open as ImageOpen
 from PIL.Image import ANTIALIAS
-import os
+import os, re
 
 
 class ImageRGB(QWidget, Ui_ImageRGB):
@@ -66,6 +66,7 @@ class ImageRGB(QWidget, Ui_ImageRGB):
 
     def get_pixel(self):
         self.textBrowser.clear()
+        str_rgb = ""
         if self.radioButton_1.isChecked():
             thumb_list = []
             y_index = self.im_100.height - 1
@@ -76,7 +77,7 @@ class ImageRGB(QWidget, Ui_ImageRGB):
                     line_list.append(ImageRGB.rgb2hex(pixel[0], pixel[1], pixel[2]))
                 thumb_list.append("".join(line_list))
                 y_index -= 1
-            self.textBrowser.setText("".join(thumb_list))
+            str_rgb = "".join(thumb_list)
         elif self.radioButton_2.isChecked():
             thumb_list = []
             y_index = self.im_50.height - 1
@@ -88,9 +89,6 @@ class ImageRGB(QWidget, Ui_ImageRGB):
                 thumb_list.append("".join(line_list))
                 y_index -= 1
             str_rgb = "".join(thumb_list)
-            str_rgb_len = len(str_rgb)
-
-            self.textBrowser.setText("".join(thumb_list))
         else:
             thumb_list = []
             y_index = self.im.height - 1
@@ -101,7 +99,16 @@ class ImageRGB(QWidget, Ui_ImageRGB):
                     line_list.append(ImageRGB.rgb2hex(pixel[0], pixel[1], pixel[2]))
                 thumb_list.append("".join(line_list))
                 y_index -= 1
-            self.textBrowser.setText("".join(thumb_list))
+            str_rgb = "".join(thumb_list)
+
+        split_str_list = re.findall(r'.{10000}', str_rgb)
+        rgbformat = ''
+        format_index = 1
+        for split_str in split_str_list:
+            rgbformat += "\n-------------第" + str(format_index) + "部分----------------\n"
+            rgbformat += split_str
+            format_index += 1
+        self.textBrowser.setText(rgbformat)
 
     def show_thumbnails(self, img, label: QLabel):
         image = ImageQt(img)
