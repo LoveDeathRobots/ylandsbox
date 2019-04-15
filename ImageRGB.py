@@ -1,8 +1,9 @@
 from PyQt5.QtWidgets import QWidget, QFileDialog, QLabel
 from UI.ImageRGB import Ui_ImageRGB
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QImage
 from PyQt5.QtCore import QSize
-
+import cv2 as cv
+import numpy as np
 import os, re
 
 
@@ -15,21 +16,32 @@ class ImageRGB(QWidget, Ui_ImageRGB):
         self.radioButton.index = 0
         self.radioButton_2.index = 1
         self.radioButton_3.index = 2
-        self.radioButton.toggled.connect(self.on_radio_button_toggled)
-        self.radioButton_2.toggled.connect(self.on_radio_button_toggled)
-        self.radioButton_3.toggled.connect(self.on_radio_button_toggled)
+        # self.radioButton.toggled.connect(self.on_radio_button_toggled)
+        # self.radioButton_2.toggled.connect(self.on_radio_button_toggled)
+        # self.radioButton_3.toggled.connect(self.on_radio_button_toggled)
         self.GetPixelsBtn.clicked.connect(self.get_pixel)
         self.current_image_path = ''
-        self.im = None
-        self.im_50 = None
-        self.im_100 = None
-        self.thumb_path_list = []
-        self.pixel_size = 0
+        # self.im = None
+        # self.im_50 = None
+        # self.im_100 = None
+        # self.thumb_path_list = []
+        # self.pixel_size = 0
+        self.img = np.ndarray(())
 
     def open_image(self):
         img_name, img_type = QFileDialog.getOpenFileName(self, "打开图片", "", "*.png;;*.jpg;;All Files(*)")
-        jpg = QPixmap(img_name).scaled(self.orgin.width(), self.orgin.height())
+
+        if img_name is '':
+            return
+
+        self.img = cv.imread(img_name, -1)
+        if self.img.size == 1:
+            return
+
         self.lineEdit.setText(img_name)
+        self.refresh_show()
+        # jpg = QPixmap(img_name).scaled(self.orgin.width(), self.orgin.height())
+
         # self.orgin.setPixmap(jpg)
         # _width, _height = self.get_orgin_size(jpg)
         # self.current_image_path = img_name
@@ -37,6 +49,14 @@ class ImageRGB(QWidget, Ui_ImageRGB):
         # self.radioButton.setEnabled(True)
         # self.radioButton_1.setEnabled(True)
         # self.radioButton_2.setEnabled(True)
+
+    def refresh_show(self):
+        height, width, channel = self.img.shape
+        bytesPerLine = 3 * width
+        self.qImg = QImage(self.img.data, width, height, bytesPerLine,
+                           QImage.Format_RGB888).rgbSwapped()
+
+        self.PreView.setPixmap(QPixmap.fromImage(self.qImg))
 
     def init_thumbnails(self, path):
         pass
@@ -122,3 +142,4 @@ class ImageRGB(QWidget, Ui_ImageRGB):
     def rgb2hex(r, g, b):
         return '{:02x}{:02x}{:02x}'.format(r, g, b)
 
+    'https://github.com/yangninghua/python-pyqt5-opencv/tree/master/PythonQtOpencv'
