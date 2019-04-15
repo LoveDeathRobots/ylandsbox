@@ -42,7 +42,7 @@
   <property name="windowTitle">
    <string>图片像素提取</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0,9">
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0,10">
    <item>
     <widget class="QFrame" name="frame">
      <property name="frameShape">
@@ -87,6 +87,9 @@
    </item>
    <item>
     <widget class="QTabWidget" name="tabWidget">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
      <property name="currentIndex">
       <number>0</number>
      </property>
@@ -94,14 +97,56 @@
       <attribute name="title">
        <string>像素提取</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,1">
+      <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="6,0,2,0">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>预览</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <widget class="QLabel" name="PreView">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0,0,0,0">
          <item>
-          <widget class="QRadioButton" name="radioButton_1">
-           <property name="enabled">
-            <bool>false</bool>
+          <spacer name="verticalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
            </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Minimum</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="radioButton_3">
            <property name="text">
             <string>100*100像素</string>
            </property>
@@ -109,9 +154,6 @@
          </item>
          <item>
           <widget class="QRadioButton" name="radioButton_2">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
            <property name="text">
             <string>50*50像素</string>
            </property>
@@ -119,155 +161,60 @@
          </item>
          <item>
           <widget class="QRadioButton" name="radioButton">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
            <property name="text">
-            <string>原尺寸像素</string>
+            <string>原尺寸缩放</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="GetRGBBtn">
+          <widget class="QSlider" name="horizontalSlider">
            <property name="enabled">
             <bool>false</bool>
            </property>
-           <property name="baseSize">
-            <size>
-             <width>0</width>
-             <height>18</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>开始提取像素</string>
-           </property>
-           <property name="checkable">
-            <bool>false</bool>
-           </property>
-           <property name="autoDefault">
-            <bool>false</bool>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
            </property>
           </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="9,1">
+           <item>
+            <widget class="QPushButton" name="GetPixelsBtn">
+             <property name="text">
+              <string>像素提取</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="PixelsToUiStrBtn">
+             <property name="text">
+              <string>像素提取转UI</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
         </layout>
        </item>
        <item>
-        <widget class="QFrame" name="frame_3">
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
          </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_4">
-          <item>
-           <widget class="QGroupBox" name="groupBox">
-            <property name="title">
-             <string>原图预览</string>
-            </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_5">
-             <item>
-              <widget class="QLabel" name="orgin">
-               <property name="minimumSize">
-                <size>
-                 <width>165</width>
-                 <height>165</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>165</width>
-                 <height>165</height>
-                </size>
-               </property>
-               <property name="baseSize">
-                <size>
-                 <width>165</width>
-                 <height>165</height>
-                </size>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item>
-           <widget class="QGroupBox" name="groupBox_2">
-            <property name="title">
-             <string>100*100</string>
-            </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_6">
-             <item>
-              <widget class="QLabel" name="thumb_100">
-               <property name="minimumSize">
-                <size>
-                 <width>165</width>
-                 <height>165</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>165</width>
-                 <height>165</height>
-                </size>
-               </property>
-               <property name="baseSize">
-                <size>
-                 <width>165</width>
-                 <height>165</height>
-                </size>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item>
-           <widget class="QGroupBox" name="groupBox_3">
-            <property name="title">
-             <string>50*50</string>
-            </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_7">
-             <item>
-              <widget class="QLabel" name="thumb_50">
-               <property name="minimumSize">
-                <size>
-                 <width>165</width>
-                 <height>165</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>165</width>
-                 <height>165</height>
-                </size>
-               </property>
-               <property name="baseSize">
-                <size>
-                 <width>165</width>
-                 <height>165</height>
-                </size>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-         </layout>
-        </widget>
+        </spacer>
        </item>
       </layout>
      </widget>
      <widget class="QWidget" name="RGBtoHEX">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <attribute name="title">
        <string>像素文本</string>
       </attribute>

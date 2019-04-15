@@ -2,9 +2,7 @@ from PyQt5.QtWidgets import QWidget, QFileDialog, QLabel
 from UI.ImageRGB import Ui_ImageRGB
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import QSize
-from PIL.ImageQt import ImageQt
-from PIL.Image import open as ImageOpen
-from PIL.Image import ANTIALIAS
+
 import os, re
 
 
@@ -15,12 +13,12 @@ class ImageRGB(QWidget, Ui_ImageRGB):
         self.setupUi(self)
         self.OpenImageBtn.clicked.connect(self.open_image)
         self.radioButton.index = 0
-        self.radioButton_1.index = 1
-        self.radioButton_2.index = 2
+        self.radioButton_2.index = 1
+        self.radioButton_3.index = 2
         self.radioButton.toggled.connect(self.on_radio_button_toggled)
-        self.radioButton_1.toggled.connect(self.on_radio_button_toggled)
         self.radioButton_2.toggled.connect(self.on_radio_button_toggled)
-        self.GetRGBBtn.clicked.connect(self.get_pixel)
+        self.radioButton_3.toggled.connect(self.on_radio_button_toggled)
+        self.GetPixelsBtn.clicked.connect(self.get_pixel)
         self.current_image_path = ''
         self.im = None
         self.im_50 = None
@@ -32,34 +30,35 @@ class ImageRGB(QWidget, Ui_ImageRGB):
         img_name, img_type = QFileDialog.getOpenFileName(self, "打开图片", "", "*.png;;*.jpg;;All Files(*)")
         jpg = QPixmap(img_name).scaled(self.orgin.width(), self.orgin.height())
         self.lineEdit.setText(img_name)
-        self.orgin.setPixmap(jpg)
-        _width, _height = self.get_orgin_size(jpg)
-        self.current_image_path = img_name
-        self.init_thumbnails(self.current_image_path)
-        self.radioButton.setEnabled(True)
-        self.radioButton_1.setEnabled(True)
-        self.radioButton_2.setEnabled(True)
+        # self.orgin.setPixmap(jpg)
+        # _width, _height = self.get_orgin_size(jpg)
+        # self.current_image_path = img_name
+        # self.init_thumbnails(self.current_image_path)
+        # self.radioButton.setEnabled(True)
+        # self.radioButton_1.setEnabled(True)
+        # self.radioButton_2.setEnabled(True)
 
     def init_thumbnails(self, path):
-        self.im = ImageOpen(path)
-        self.im_100 = self.im.copy()
-        self.im_50 = self.im.copy()
-        dirname, filename = os.path.split(os.path.abspath(__file__))
-        img_dirname, img_temp_filename = os.path.split(os.path.abspath(path))
-        filename, extension = os.path.splitext(img_temp_filename)
-        thumb_path = os.path.join(dirname, 'thumb\\')
-        if not os.path.exists(thumb_path):
-            os.makedirs(thumb_path, mode=0o777)
-        thumb_100_path = os.path.join(thumb_path, filename + 'thumb_100' + extension)
-        self.thumb_path_list.append(thumb_100_path)
-        thumb_50_path = os.path.join(thumb_path, filename + 'thumb_50' + extension)
-        self.thumb_path_list.append(thumb_50_path)
-        self.im_100.thumbnail((100, 100), ANTIALIAS)
-        self.im_100.save(thumb_100_path)
-        self.show_thumbnails(self.im_100, self.thumb_100)
-        self.im_50.thumbnail((50, 50), ANTIALIAS)
-        self.im_50.save(thumb_50_path)
-        self.show_thumbnails(self.im_50, self.thumb_50)
+        pass
+        # self.im = ImageOpen(path)
+        # self.im_100 = self.im.copy()
+        # self.im_50 = self.im.copy()
+        # dirname, filename = os.path.split(os.path.abspath(__file__))
+        # img_dirname, img_temp_filename = os.path.split(os.path.abspath(path))
+        # filename, extension = os.path.splitext(img_temp_filename)
+        # thumb_path = os.path.join(dirname, 'thumb\\')
+        # if not os.path.exists(thumb_path):
+        #     os.makedirs(thumb_path, mode=0o777)
+        # thumb_100_path = os.path.join(thumb_path, filename + 'thumb_100' + extension)
+        # self.thumb_path_list.append(thumb_100_path)
+        # thumb_50_path = os.path.join(thumb_path, filename + 'thumb_50' + extension)
+        # self.thumb_path_list.append(thumb_50_path)
+        # self.im_100.thumbnail((100, 100), ANTIALIAS)
+        # self.im_100.save(thumb_100_path)
+        # self.show_thumbnails(self.im_100, self.thumb_100)
+        # self.im_50.thumbnail((50, 50), ANTIALIAS)
+        # self.im_50.save(thumb_50_path)
+        # self.show_thumbnails(self.im_50, self.thumb_50)
 
     def on_radio_button_toggled(self):
         self.GetRGBBtn.setEnabled(True)

@@ -1,7 +1,8 @@
 import sys
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtCore import QCoreApplication, Qt
-from MainWin import MainWin
+# from MainWin import MainWin
+from ImageRGB import ImageRGB
 
 class App:
 
@@ -30,7 +31,7 @@ class App:
 if __name__ == '__main__':
     QCoreApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
     app = QApplication(sys.argv)
-    ylands = MainWin()
+    ylands = ImageRGB()
     ylands.show()
     res = app.exec_()
     sys.exit(res)
